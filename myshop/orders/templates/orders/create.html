@@ -1,0 +1,110 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Оформление заказа</h2>
+            
+            <div class="card shadow-sm border-0 p-4">
+                <div class="alert alert-light border d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">Товары:</span> <strong>{{ cart.get_total_price }} BYN.</strong><br>
+                        <span class="text-muted">Доставка:</span> <strong id="delivery-cost">0.00 BYN.</strong>
+                    </div>
+                    <div class="text-end">
+                        <span class="fs-4">Итого:</span>
+                        <br>
+                        <span class="fs-2 fw-bold text-danger" id="total-price">{{ cart.get_total_price }}</span> <span class="text-danger fw-bold">BYN</span>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Имя</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Фамилия</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Способ доставки</label>
+                        {{ form.shipping_method_obj }} 
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Адрес (или отделение)</label>
+                        {{ form.address }}
+                    </div>
+                    
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Выберите способ оплаты:</h5>
+                    <div class="mb-4">
+                        {% for radio in form.payment_method %}
+                            <div class="form-check mb-2">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                    {% if radio.data.value == 'paritet' %}
+                                        <i class="fab fa-cc-visa text-primary ms-1"></i>
+                                        <i class="fab fa-cc-mastercard text-danger"></i>
+                                    {% elif radio.data.value == 'yookassa' %}
+                                        <i class="fas fa-ruble-sign text-muted ms-1"></i>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-3 fs-5 mt-3">
+                        Перейти к оплате
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const prices = {};
+
+    {% for method in shipping_methods %}
+        prices["{{ method.id }}"] = {{ method.price|stringformat:".2f" }};
+    {% endfor %}
+
+    const cartTotal = parseFloat("{{ cart.get_total_price }}".replace(',', '.').replace(/\s/g, '')); 
+
+    const select = document.getElementById('shipping-select');
+    const deliveryDisplay = document.getElementById('delivery-cost');
+    const totalDisplay = document.getElementById('total-price');
+
+    function updatePrice() {
+        if (!select) return;
+
+        const methodId = select.value;
+
+        const cost = parseFloat(prices[methodId]) || 0;
+
+        deliveryDisplay.textContent = cost.toFixed(2) + ' BYN';
+
+        const total = cartTotal + cost;
+        totalDisplay.textContent = total.toFixed(2);
+    }
+
+    if (select) {
+        select.addEventListener('change', updatePrice);
+        updatePrice();
+    }
+</script>
+{% endblock %}

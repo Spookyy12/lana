@@ -1,0 +1,75 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    {% if product.seo_title %}{{ product.seo_title }}{% else %}{{ product.name }}{% endif %}
+{% endblock %}
+
+{% block description %}
+    {% if product.seo_description %}{{ product.seo_description }}{% else %}Купить {{ product.name }} в Минске по цене {{ product.price }} BYN{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+    <!-- НОВАЯ КНОПКА "НАЗАД" -->
+    <div class="mb-4">
+        <a href="{% url 'shop:product_list_by_category' product.category.slug %}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Вернуться в раздел "{{ product.category.name }}"
+        </a>
+        <!-- Или просто в общий каталог, если хочешь: -->
+        <!-- <a href="/" class="btn btn-link text-decoration-none text-muted">← На главную</a> -->
+    </div>
+    <!-- КОНЕЦ КНОПКИ -->
+
+    <div class="card border-0 shadow-sm p-4">
+        <div class="row">
+            <!-- Картинка -->
+            <div class="col-md-5 text-center">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
+                {% else %}
+                    <img src="https://via.placeholder.com/400" class="img-fluid rounded">
+                {% endif %}
+            </div>
+            
+            <!-- Описание -->
+            <div class="col-md-7">
+                <h1 class="fw-bold">{{ product.name }}</h1>
+                <p class="text-muted">Категория: <a href="{% url 'shop:product_list_by_category' product.category.slug %}" class="text-decoration-none">{{ product.category }}</a></p>
+                
+                <h3 class="text-danger fw-bold my-3">BYN{{ product.price }}</h3>
+                
+                <p class="mb-4 text-muted">{{ product.description|linebreaks }}</p>
+
+                <!-- Форма добавления в корзину -->
+                <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex flex-column gap-3">
+                    {% csrf_token %}
+                    
+                    <!-- Выбор размера (если есть) -->
+                    {% if product.sizes.exists %}
+                    <div class="mb-2" style="max-width: 200px;">
+                        <label class="form-label fw-bold small text-muted">Размер:</label>
+                        <select name="size" class="form-select" required>
+                            <option value="" selected disabled>-- Выберите --</option>
+                            {% for size in product.sizes.all %}
+                                <option value="{{ size.name }}">{{ size.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-3 align-items-end">
+                        <div>
+                            <label class="form-label text-muted small">Количество</label>
+                            {{ cart_product_form.quantity }}
+                        </div>
+                        <button type="submit" class="btn btn-danger px-5 py-2">
+                            <i class="fas fa-shopping-cart me-2"></i> В корзину
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

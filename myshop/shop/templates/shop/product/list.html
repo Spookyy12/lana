@@ -1,0 +1,160 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if category %}
+        {{ category.name }} — Купить шерстяные изделия
+    {% elif seo_page and seo_page.seo_title %}
+        {{ seo_page.seo_title }}
+    {% else %}
+        Lana.by — изделия из шерсти
+    {% endif %}
+{% endblock %}
+
+{% block description %}
+    {% if category %}
+        Купить {{ category.name }} в интернет-магазине Lana.by с доставкой.
+    {% elif seo_page and seo_page.seo_description %}
+        {{ seo_page.seo_description }}
+    {% else %}
+        Интернет-магазин пряжи в Беларуси.
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="sidebar-menu">
+                <div class="sidebar-header">
+                    <i class="fas fa-bars"></i> Каталог
+                </div>
+                <div class="sidebar-list d-flex flex-column">
+                    <a href="{% url 'shop:product_list' %}" class="{% if not category %}text-danger fw-bold{% endif %}">
+                        <i class="fas fa-th-large"></i> Все товары
+                    </a>
+                    {% for c in categories %}
+                        <a href="{% url 'shop:product_list_by_category' c.slug %}" 
+                           class="{% if category.slug == c.slug %}text-danger fw-bold{% endif %}">
+                            <i class="fas fa-box-open"></i> {{ c.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="row g-4 mb-4">
+                <div class="col-md-8">
+                    {% if main_banner %}
+                    <div class="hero-banner-main shadow-sm" style="background: url('{{ main_banner.image.url }}') center/cover no-repeat; position: relative;">
+                        <div style="background: rgba(0,0,0,0.4); position: absolute; inset: 0; border-radius: 20px;"></div>
+                        <div class="z-2 position-relative text-white">
+                            <span class="badge bg-danger mb-2 px-3 py-2 rounded-pill">Акция</span>
+                            <h1 class="display-4 fw-bold">{{ main_banner.title }}</h1>
+                            <p class="lead">{{ main_banner.text }}</p>
+                            {% if main_banner.link %}
+                                <a href="{{ main_banner.link }}" class="btn btn-light rounded-pill px-4 fw-bold mt-3">Подробнее</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                        {% if small_banners %}
+                            <div class="d-flex flex-column h-100 gap-3">
+                                {% for banner in small_banners %}
+                                <a href="{{ banner.link|default:'#' }}" class="d-block flex-grow-1 text-decoration-none">
+                                    <div class="banner-vertical shadow-sm" style="background-image: url('{{ banner.image.url }}'); min-height: 160px; justify-content: center;">
+                                        <div class="banner-overlay"></div>
+                                        <div class="position-relative z-2">
+                                            <h3 class="fw-bold mb-2 fs-5">{{ banner.title }}</h3>
+                                            <p class="mb-3 opacity-75 small line-clamp-2">{{ banner.text|truncatewords:10 }}</p>
+                                            {% if banner.link %}
+                                            <span class="btn btn-light rounded-pill btn-sm px-3 fw-bold" style="font-size: 0.8rem;">
+                                                Подробнее <i class="fas fa-arrow-right ms-1"></i>
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                </div>
+            </div>
+
+            <h3 class="fw-bold mb-4">
+                {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
+            </h3>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="product-card shadow-sm h-100 d-flex flex-column position-relative border-0">
+                        
+                        <a href="{% url 'shop:product_detail' product.id product.slug %}" class="text-decoration-none text-dark flex-grow-1 d-flex flex-column">
+                            
+                            <!-- Изображение от края до края, вмещается полностью -->
+                            <div class="product-img-wrapper w-100 bg-white rounded-top position-relative">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="d-block w-100 rounded-top" style="aspect-ratio: 1/1; object-fit: contain;">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/300x300?text=No+Image" class="d-block w-100 rounded-top" style="aspect-ratio: 1/1; object-fit: contain;">
+                                {% endif %}
+                            </div>
+                            
+                            <div class="p-3 pb-0">
+                                <h5 class="fw-bold card-title-fix" title="{{ product.name }}">{{ product.name }}</h5>
+                                
+                                <p class="card-desc-fix mb-2">
+                                    {{ product.description|striptags|truncatewords:15 }}
+                                </p>
+
+                                <!-- БЛОК РАЗМЕРОВ -->
+                                {% if product.sizes.exists %}
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        {% for size in product.sizes.all %}
+                                            <span class="badge bg-light text-dark border border-secondary fw-normal">
+                                                {{ size.name }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <!-- КОНЕЦ БЛОКА РАЗМЕРОВ -->
+                            </div>
+                        </a>
+
+                        <div class="d-flex justify-content-between align-items-center p-3 mt-auto border-top border-light">
+                            <span class="fs-4 fw-bold text-dark">{{ product.price }} BYN</span>
+                            
+                            <!-- Унифицированная кнопка корзины -->
+                            {% if product.sizes.exists %}
+                                <a href="{% url 'shop:product_detail' product.id product.slug %}" class="btn btn-danger btn-sm rounded-circle shadow-none d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" title="Выбрать размер">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                            {% else %}
+                                <form action="{% url 'shop:cart_add' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="update" value="False">
+                                    
+                                    <button type="submit" class="btn btn-danger btn-sm rounded-circle shadow-none" style="width: 40px; height: 40px;" title="В корзину">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="text-muted">Товаров пока нет.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

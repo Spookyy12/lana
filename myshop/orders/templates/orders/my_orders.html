@@ -1,0 +1,65 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">История заказов</h2>
+    
+    {% if orders %}
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-nowrap">
+                        <thead class="table-light">
+                            <tr>
+                                <th>№ Заказа</th>
+                                <th>Дата</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                                <th>Детали</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>
+                                    <strong>#{{ order.id }}</strong>
+                                </td>
+                                <td>{{ order.created|date:"d.m.Y H:i" }}</td>
+                                <td class="fw-bold">{{ order.get_total_cost }} BYN</td>
+                                <td>
+                                    {% if order.paid %}
+                                        <span class="badge bg-success rounded-pill">Оплачено</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark rounded-pill">Ожидает оплаты</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled small mb-0 text-wrap" style="min-width: 200px;">
+                                        {% for item in order.items.all %}
+                                            <li class="mb-1">
+                                                <i class="fas fa-circle text-muted" style="font-size: 5px; vertical-align: middle;"></i> 
+                                                {{ item.product.name }} <span class="text-muted">x {{ item.quantity }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3 text-muted">
+                <i class="fas fa-history fa-4x"></i>
+            </div>
+            <h3>История заказов пуста</h3>
+            <p class="text-muted">Здесь будут отображаться ваши покупки.</p>
+            <a href="/" class="btn btn-primary mt-3">Перейти в каталог</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

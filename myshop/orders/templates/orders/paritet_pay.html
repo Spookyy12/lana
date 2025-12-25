@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оплата заказа №{{ order.id }} | Paritet Bank (Demo)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .payment-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .card-mockup { background: linear-gradient(135deg, #004e92, #000428); color: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="payment-card">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold text-primary">Paritet Bank</h4>
+            <p class="text-muted small">Безопасный платежный шлюз (Тест)</p>
+        </div>
+
+        <div class="card-mockup">
+            <div class="d-flex justify-content-between mb-4">
+                <span>CARD NUMBER</span>
+                <span class="fw-bold fst-italic">VISA</span>
+            </div>
+            <div class="fs-4 mb-3" style="letter-spacing: 2px;">•••• •••• •••• ••••</div>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="small" style="font-size: 0.7rem;">CARD HOLDER</div>
+                    <div>YOUR NAME</div>
+                </div>
+                <div>
+                    <div class="small" style="font-size: 0.7rem;">EXPIRES</div>
+                    <div>MM/YY</div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="text-center mb-3">Сумма к оплате: <strong>{{ order.get_total_cost }} BYN</strong></h5>
+
+        <form action="{% url 'orders:paritet_process' order.id %}" method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label small text-muted">Номер карты</label>
+                <input type="text" class="form-control" placeholder="0000 0000 0000 0000" required>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-6">
+                    <label class="form-label small text-muted">Срок (ММ/ГГ)</label>
+                    <input type="text" class="form-control" placeholder="12/26" required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label small text-muted">CVC/CVV</label>
+                    <input type="password" class="form-control" placeholder="123" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">ОПЛАТИТЬ</button>
+            <div class="text-center mt-3">
+                <a href="/" class="text-muted small text-decoration-none">Отменить и вернуться в магазин</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

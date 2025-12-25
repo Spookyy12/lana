@@ -1,0 +1,19 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+{% endblock %}
+
+{% block description %}
+    {% if page.seo_description %}{{ page.seo_description }}{% else %}{{ page.title }} - Lana.by{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 fw-bold">{{ page.title }}</h1>
+    
+    <div class="content-body">
+        {{ page.content|safe|linebreaks }}
+    </div>
+</div>
+{% endblock %}

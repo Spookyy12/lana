@@ -26,10 +26,10 @@ SECRET_KEY = 'django-insecure-ssj9cs-@()!xfkig(f_5ags0cmr#b3b92hh#4)o=)9zro0+*q=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
-# Application definition
+# Application definition    
 
 INSTALLED_APPS = [
     'jazzmin', 

@@ -31,12 +31,13 @@
                 </div>
                 <div class="sidebar-list d-flex flex-column">
                     <a href="{% url 'shop:product_list' %}" class="{% if not category %}text-danger fw-bold{% endif %}">
-                        <i class="fas fa-th-large"></i> Все товары
+                        <!-- Изменили иконку "Все товары" -->
+                        <i class="fas fa-boxes-stacked"></i> Все товары
                     </a>
                     {% for c in categories %}
                         <a href="{% url 'shop:product_list_by_category' c.slug %}" 
                            class="{% if category.slug == c.slug %}text-danger fw-bold{% endif %}">
-                            <i class="fas fa-box-open"></i> {{ c.name }}
+                            <i class="fas fa-gift"></i> {{ c.name }}
                         </a>
                     {% endfor %}
                 </div>
@@ -44,54 +45,54 @@
         </div>
 
         <div class="col-lg-9">
-            <!-- FEATURED SECTION  -->
-<div class="featured-section mb-5">
-  <div class="row g-4">
-    <!-- Main FEATURED  -->
-    <div class="col-lg-8">
-      {% if main_banner %}
-      <div class="hero-feature" style="background-image: url('{{ main_banner.image.url }}');">
-        <div class="feature-overlay"></div>
-        <span class="feature-badge bg-danger">Акция</span>
-        <div class="feature-content">
-          <h2>{{ main_banner.title }}</h2>
-          <p>{{ main_banner.text }}</p>
-          {% if main_banner.link %}
-            <a href="{{ main_banner.link }}" class="btn btn-danger">Подробнее</a>
-          {% endif %}
-        </div>
-      </div>
-      {% endif %}
-    </div>
+            <!-- FEATURED SECTION -->
+            <div class="featured-section mb-5">
+                <div class="row g-4">
+                    <!-- Main FEATURED -->
+                    <div class="col-lg-8">
+                        {% if main_banner %}
+                        <div class="hero-feature" style="background-image: url('{{ main_banner.image.url }}');">
+                            <div class="feature-overlay"></div>
+                            <span class="feature-badge bg-danger">Акция</span>
+                            <div class="feature-content">
+                                <h2>{{ main_banner.title }}</h2>
+                                <p>{{ main_banner.text }}</p>
+                                {% if main_banner.link %}
+                                    <a href="{{ main_banner.link }}" class="btn btn-danger">Подробнее</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
 
-    <!-- Two Mini FEATURED  -->
-    <div class="col-lg-4">
-      <div class="side-features">
-        {% if small_top_banner %}
-        <div class="side-feature" style="background-image: url('{{ small_top_banner.image.url }}');">
-          <div class="feature-overlay"></div>
-          <div class="feature-content">
-            <h4>{{ small_top_banner.title }}</h4>
-            <p>{{ small_top_banner.text|truncatewords:12 }}</p>
-            <a href="{{ small_top_banner.link|default:'#' }}" class="btn btn-danger btn-sm">Подробнее</a>
-          </div>
-        </div>
-        {% endif %}
+                    <!-- Two Mini FEATURED -->
+                    <div class="col-lg-4">
+                        <div class="side-features">
+                            {% if small_top_banner %}
+                            <div class="side-feature" style="background-image: url('{{ small_top_banner.image.url }}');">
+                                <div class="feature-overlay"></div>
+                                <div class="feature-content">
+                                    <h4>{{ small_top_banner.title }}</h4>
+                                    <p>{{ small_top_banner.text|truncatewords:12 }}</p>
+                                    <a href="{{ small_top_banner.link|default:'#' }}" class="btn btn-danger btn-sm">Подробнее</a>
+                                </div>
+                            </div>
+                            {% endif %}
 
-        {% if small_bottom_banner %}
-        <div class="side-feature" style="background-image: url('{{ small_bottom_banner.image.url }}');">
-          <div class="feature-overlay"></div>
-          <div class="feature-content">
-            <h4>{{ small_bottom_banner.title }}</h4>
-            <p>{{ small_bottom_banner.text|truncatewords:12 }}</p>
-            <a href="{{ small_bottom_banner.link|default:'#' }}" class="btn btn-danger btn-sm">Подробнее</a>
-          </div>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
+                            {% if small_bottom_banner %}
+                            <div class="side-feature" style="background-image: url('{{ small_bottom_banner.image.url }}');">
+                                <div class="feature-overlay"></div>
+                                <div class="feature-content">
+                                    <h4>{{ small_bottom_banner.title }}</h4>
+                                    <p>{{ small_bottom_banner.text|truncatewords:12 }}</p>
+                                    <a href="{{ small_bottom_banner.link|default:'#' }}" class="btn btn-danger btn-sm">Подробнее</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <h3 class="fw-bold mb-4">
                 {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
@@ -100,11 +101,11 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {% for product in products %}
                 <div class="col">
-                    <div class="product-card shadow-sm h-100 d-flex flex-column position-relative border-0">
+                    <div class="product-card h-100 d-flex flex-column position-relative border-0">
                         
                         <a href="{% url 'shop:product_detail' product.id product.slug %}" class="text-decoration-none text-dark flex-grow-1 d-flex flex-column">
                             
-                            <!-- Изображение от края до края, вмещается полностью -->
+                            <!-- Изображение -->
                             <div class="product-img-wrapper w-100 bg-white rounded-top position-relative">
                                 {% if product.image %}
                                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="d-block w-100 rounded-top" style="aspect-ratio: 1/1; object-fit: contain;">
@@ -130,31 +131,32 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                                <!-- КОНЕЦ БЛОКА РАЗМЕРОВ -->
                             </div>
                         </a>
 
                         <div class="d-flex justify-content-between align-items-center p-3 mt-auto border-top border-light">
                             <span class="fs-4 fw-bold text-dark">{{ product.price }} BYN</span>
                             
-                            <!-- Унифицированная кнопка корзины -->
+                            <!-- Переделанная кнопка корзины -->
                             {% if product.sizes.exists %}
-                                <a href="{% url 'shop:product_detail' product.id product.slug %}" class="btn btn-danger btn-sm rounded-circle shadow-none d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;" title="Выбрать размер">
-                                    <i class="fas fa-shopping-cart"></i>
+                                <a href="{% url 'shop:product_detail' product.id product.slug %}" 
+                                   class="btn btn-danger rounded-circle cart-btn" 
+                                   title="Выбрать размер">
+                                    <i class="fas fa-cart-shopping"></i>
                                 </a>
                             {% else %}
                                 <form action="{% url 'shop:cart_add' product.id %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="update" value="False">
-                                    
-                                    <button type="submit" class="btn btn-danger btn-sm rounded-circle shadow-none" style="width: 40px; height: 40px;" title="В корзину">
-                                        <i class="fas fa-shopping-cart"></i>
+                                    <button type="submit" 
+                                            class="btn btn-danger rounded-circle cart-btn" 
+                                            title="В корзину">
+                                        <i class="fas fa-cart-shopping"></i>
                                     </button>
                                 </form>
                             {% endif %}
                         </div>
-                        
                     </div>
                 </div>
                 {% empty %}
@@ -165,43 +167,41 @@
             <!-- ПАГИНАЦИЯ -->
             {% if products.has_other_pages %}
             <nav aria-label="Page navigation" class="mt-5">
-              <ul class="pagination justify-content-center">
-                {% if products.has_previous %}
-                  <li class="page-item">
-                    <a class="page-link text-dark" href="?page={{ products.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                    </a>
-                  </li>
-                {% else %}
-                  <li class="page-item disabled">
-                    <span class="page-link">&laquo;</span>
-                  </li>
-                {% endif %}
+                <ul class="pagination justify-content-center">
+                    {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link text-dark" href="?page={{ products.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                    {% endif %}
 
-                {% for i in products.paginator.page_range %}
-                  {% if products.number == i %}
+                    {% for i in products.paginator.page_range %}
+                    {% if products.number == i %}
                     <li class="page-item active"><span class="page-link bg-danger border-danger">{{ i }}</span></li>
-                  {% else %}
+                    {% else %}
                     <li class="page-item"><a class="page-link text-dark" href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a></li>
-                  {% endif %}
-                {% endfor %}
+                    {% endif %}
+                    {% endfor %}
 
-                {% if products.has_next %}
-                  <li class="page-item">
-                    <a class="page-link text-dark" href="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                    </a>
-                  </li>
-                {% else %}
-                  <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
-                  </li>
-                {% endif %}
-              </ul>
+                    {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link text-dark" href="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                    {% endif %}
+                </ul>
             </nav>
             {% endif %}
-            <!-- КОНЕЦ ПАГИНАЦИИ -->
-
         </div>
     </div>
 </div>

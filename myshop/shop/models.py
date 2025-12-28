@@ -65,7 +65,7 @@ class Product(models.Model):
 class Banner(models.Model):
     title = models.CharField(max_length=100, verbose_name="Заголовок")
     text = models.CharField(max_length=200, blank=True, verbose_name="Текст")
-    image = models.ImageField(upload_to='banners/', verbose_name="Изображение")
+    image = models.ImageField(upload_to='offers/', verbose_name="Изображение")
     link = models.CharField(max_length=200, blank=True, verbose_name="Ссылка (например /category/notebooks)")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     

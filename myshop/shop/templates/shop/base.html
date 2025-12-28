@@ -7,18 +7,18 @@
     <title>{% block title %}Lana.by — Всё для вязания{% endblock %}</title>
     <meta name="description" content="{% block description %}Интернет-магазин пряжи в Беларуси{% endblock %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'shop/img/logo.png' %}">
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{% static 'shop/css/style.css' %}" rel="stylesheet">
 
-    <!-- Yandex.Metrika counter  -->
+    <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
         m[i].l=1*new Date();
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
         (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
         ym(105995816, "init", {
             clickmap:true,
             trackLinks:true,
@@ -31,68 +31,92 @@
     <!-- /Yandex.Metrika counter -->
 </head>
 <body>
+
+    <style>
+        .footer-social-link {
+            color: #000000;
+            font-size: 24px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .footer-social-link:hover {
+            color: #555555;
+        }
+    </style>
+
+
     <header class="bg-white py-3 border-bottom sticky-top">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-2">
                     <a href="/" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
                         <img src="{% static 'shop/img/logo.png' %}" alt="Lana.by" style="width: 50px; height: 50px;">
+
                         <div class="d-flex flex-column pt-2">
                             <span class="fw-bold fs-4" style="color: #000; line-height: 1;">Lana.by</span>
-                            <p class="small mb-0" style="color: #fdbf8c;">
+                             <p class="small mb-0" style="color: #fdbf8c;">
                                 Online store
                             </p>
                         </div>
                     </a>
                 </div>
+
                 <div class="col-md-6">
                     <form action="{% url 'shop:product_list' %}" method="get" class="input-group search-bar-custom">
-                        <input type="text" name="q" class="form-control bg-light border-start-0"
-                               placeholder="Найти товар..." value="{{ query|default:'' }}">
+
+                        <input type="text" name="q" class="form-control bg-light border-start-0" 
+                            placeholder="Найти товар..." value="{{ query|default:'' }}">
                         <button class="btn btn-danger text-white" type="submit">
-                            <i class="fas fa-search"></i>
                         </button>
                     </form>
                 </div>
-                <div class="col-md-4 d-flex justify-content-end align-items-center gap-3">
-                    {% if user.is_authenticated %}
-                        <div class="dropdown d-inline-block">
-                            <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                Привет, {{ user.username }}
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'orders:my_orders' %}">Мои заказы</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post" class="px-3 py-1">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-danger w-100">Выйти</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-sm btn-danger rounded-pill px-3">Войти</a>
-                    {% endif %}
-                    <a href="{% url 'shop:cart_detail' %}" class="btn btn-light rounded-circle icon-btn text-secondary position-relative">
-                        <i class="fas fa-shopping-bag"></i>
-                        {% if cart|length > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ cart|length }}
-                            </span>
-                        {% endif %}
-                    </a>
-                    <div class="d-none d-lg-block">
-                        <small class="text-muted d-block" style="line-height: 1;">Корзина</small>
-                        <span class="fw-bold">BYN{{ cart.get_total_price }}</span>
-                    </div>
+
+                    <div class="col-md-4 d-flex justify-content-end align-items-center gap-4">
+    {% if user.is_authenticated %}
+        <div class="user-dropdown position-relative">
+            <button class="user-btn d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="fw-medium">Привет, {{ user.username }}</span>
+                <i class="fas fa-chevron-down small opacity-75"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-md border-0 rounded-md mt-2">
+                <li>
+                    <a class="dropdown-item py-2 px-3" href="{% url 'orders:my_orders' %}">Мои заказы</a>
+                </li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item text-danger py-2 px-3">Выйти</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    {% else %}
+        <a href="{% url 'login' %}" class="login-btn px-4 py-2 rounded-pill fw-medium">Войти</a>
+    {% endif %}
+
+    <a href="{% url 'shop:cart_detail' %}" class="cart-link position-relative icon-btn" title="Корзина">
+        <i class="fas fa-shopping-bag"></i>
+        {% if cart|length > 0 %}
+            <span class="cart-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                {{ cart|length }}
+            </span>
+        {% endif %}
+    </a>
+
+    <div class="cart-info d-none d-lg-block text-end">
+        <small class="d-block text-muted lh-1">Корзина</small>
+        <strong class="fs-5">{{ cart.get_total_price|default:"0,00" }} BYN</strong>
+    </div>
+</div>
                 </div>
             </div>
         </div>
     </header>
 
     <div class="main-wrapper py-4">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
 
     <footer>
@@ -106,10 +130,12 @@
                             <span class="small" style="color: #fdbf8c; line-height: 1;">Online store</span>
                         </div>
                     </a>
+
                     <p class="small mb-3" style="color: #000;">
                         Онлайн магазин шерстяных изделий и товаров для здоровья.
                     </p>
-                    <!-- Соцсети -->
+
+                    <!-- Иконки соц сетей: одна строка, один цвет, уменьшены -->
                     <div class="mt-3 d-flex flex-row gap-3">
                         {% if contacts.telegram %}
                             <a href="{{ contacts.telegram }}" target="_blank" class="footer-social-link"><i class="fab fa-telegram"></i></a>
@@ -134,6 +160,7 @@
                         {% endif %}
                     </div>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h5>Покупателям</h5>
                     <ul class="list-unstyled">
@@ -141,102 +168,53 @@
                         <li><a href="{% url 'shop:privacy' %}">Политика конфиденциальности</a></li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h5>Компания</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'shop:about' %}">О нас</a></li>
                     </ul>
                 </div>
+
+                <!-- Колонка 4: Контакты -->
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h5>Контакты</h5>
                     {% if contacts %}
                         <p class="mb-2">
-                            <i class="fas fa-phone-alt text-danger me-2"></i>
-                            <a href="tel:{{ contacts.phone_link }}" class="footer-link">{{ contacts.phone }}</a>
+                            <i class="fas fa-phone-alt text-danger me-2"></i> 
+                            <!-- Ссылка на телефон -->
+                            <a href="tel:{{ contacts.phone_link }}" class="footer-link">
+                                {{ contacts.phone }}
+                            </a>
                         </p>
+                        
                         <p class="mb-2">
-                            <i class="fas fa-envelope text-danger me-2"></i>
-                            <a href="mailto:{{ contacts.email }}" class="footer-link">{{ contacts.email }}</a>
+                            <i class="fas fa-envelope text-danger me-2"></i> 
+                            <!-- Ссылка на почту -->
+                            <a href="mailto:{{ contacts.email }}" class="footer-link">
+                                {{ contacts.email }}
+                            </a>
                         </p>
+
                     {% else %}
                         <p class="text-muted">Заполните контакты в админке</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-
+        
         <div class="bg-light py-3 border-top">
             <div class="container text-center text-muted small">
-                © 2025 Lana.by. Все права защищены.
+                &copy; 2025 Lana.by. Все права защищены.
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- JivoChat (чат) -->
-    <script defer src="//code.jivo.ru/widget/XEg1eXShA8"></script>
+    <!-- JivoChat -->
+    <script src="//code.jivo.ru/widget/XEg1eXShA8" async></script>
+
     
-  <!-- CUSTOM CURSOR -->
-<div class="cursor-arrow" aria-hidden="true"></div>
-
-<script>
-(() => {
-  if (
-    window.matchMedia('(pointer: coarse)').matches ||
-    window.innerWidth < 1024
-  ) return;
-
-  const cursor = document.querySelector('.cursor-arrow');
-  if (!cursor) return;
-
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let x = mouseX;
-  let y = mouseY;
-
-  const speed = 0.18;
-
-  const hoverTargets = 'a, button, .btn, .product-card, .icon-btn, .sidebar-list a';
-  const hideTargets = 'input, textarea, select, [contenteditable]';
-
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    if (e.target.closest(hideTargets)) {
-      cursor.classList.add('is-hidden');
-    } else {
-      cursor.classList.remove('is-hidden');
-    }
-  });
-
-  document.addEventListener('pointerover', e => {
-    if (e.target.closest(hoverTargets)) {
-      cursor.classList.add('is-hover');
-    }
-  });
-
-  document.addEventListener('pointerout', e => {
-    if (!e.relatedTarget || !e.relatedTarget.closest(hoverTargets)) {
-      cursor.classList.remove('is-hover');
-    }
-  });
-
-  function loop() {
-    x += (mouseX - x) * speed;
-    y += (mouseY - y) * speed;
-
-    cursor.style.transform =
-      `translate3d(${x}px, ${y}px, 0) rotate(45deg)`;
-
-    requestAnimationFrame(loop);
-  }
-
-  loop();
-})();
-</script>
-
 </body>
 </html>

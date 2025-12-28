@@ -11,11 +11,12 @@ class OrderCreateForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['first_name', 'last_name', 'email', 'payment_method', 'address'] 
+        fields = ['first_name', 'last_name', 'email', 'phone', 'payment_method', 'address'] 
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Иван'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Иванов'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ivan@example.com'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+375 29 123-45-67'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Улица, дом, квартира'}),
             'payment_method': forms.RadioSelect(attrs={'class': 'form-check-input'}),
         }

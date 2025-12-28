@@ -27,6 +27,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50, verbose_name="Имя")
     last_name = models.CharField(max_length=50, verbose_name="Фамилия")
     email = models.EmailField(verbose_name="Email")
+    phone = models.CharField(max_length=20, verbose_name="Телефон", default="")
     address = models.CharField(max_length=250, verbose_name="Адрес доставки")
     
     shipping_method = models.CharField(max_length=100, verbose_name="Способ доставки")

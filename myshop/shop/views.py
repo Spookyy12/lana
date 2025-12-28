@@ -6,11 +6,12 @@ from .forms import CartAddProductForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
-    products = Product.objects.filter(available=True)
+    products_list = Product.objects.filter(available=True)
     
     # --- НОВЫЙ КОД: Получаем SEO для главной ---
     # Ищем страницу с slug='home'. first() вернет None, если страницы нет (чтобы сайт не упал)
@@ -20,25 +21,39 @@ def product_list(request, category_slug=None):
     # Поиск
     query = request.GET.get('q') 
     if query:
-        products = products.filter(
+        products_list = products_list.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
         )
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
-        products = products.filter(category=category)
+        products_list = products_list.filter(category=category)
+    
+    # Пагинация
+    paginator = Paginator(products_list, 9) # 9 товаров на странице
+    page = request.GET.get('page')
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
     
     main_banner = Banner.objects.filter(is_active=True, banner_type='main').first()
-    small_banners = Banner.objects.filter(is_active=True, banner_type='small')[:2]
+    
+    # Забираем конкретные баннеры для верхней и нижней позиции справа
+    small_top_banner = Banner.objects.filter(is_active=True, banner_type='small_top').first()
+    small_bottom_banner = Banner.objects.filter(is_active=True, banner_type='small_bottom').first()
 
     return render(request, 'shop/product/list.html', {
         'category': category,
         'categories': categories,
         'products': products,
         'main_banner': main_banner,
-        'small_banners': small_banners,
+        'small_top_banner': small_top_banner,
+        'small_bottom_banner': small_bottom_banner,
         'query': query,
-        'seo_page': seo_page # <-- НЕ ЗАБУДЬ ПЕРЕДАТЬ В ШАБЛОН
+        'seo_page': seo_page
     })
 
 def product_detail(request, id, slug):

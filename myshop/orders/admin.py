@@ -16,14 +16,14 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'first_name', 'last_name', 'email',
+        'id', 'first_name', 'last_name', 'email', 'phone',
         'address', 'paid', 'created', 'order_total'
     ]
     
     list_filter = ['paid', 'created'] 
     
     inlines = [OrderItemInline]
-    search_fields = ['first_name', 'last_name', 'email', 'address']
+    search_fields = ['first_name', 'last_name', 'email', 'phone', 'address']
     readonly_fields = ['payment_id', 'created']
 
     def order_total(self, obj):

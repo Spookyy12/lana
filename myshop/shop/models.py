@@ -71,9 +71,10 @@ class Banner(models.Model):
     
     TYPE_CHOICES = (
         ('main', 'Главный (Большой)'),
-        ('small', 'Маленький (Боковой)'),
+        ('small_top', 'Маленький (Боковой верхний)'),
+        ('small_bottom', 'Маленький (Боковой нижний)'),
     )
-    banner_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='main')
+    banner_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='main')
 
     def __str__(self):
         return self.title
@@ -87,27 +88,6 @@ class SiteSettings(models.Model):
     email = models.EmailField(verbose_name="Email", default="info@lana.by")
     address = models.CharField(max_length=200, verbose_name="Адрес", default="г. Минск, пр. Независимости 100")
     
-
-    telegram = models.URLField(blank=True, verbose_name="Ссылка на Telegram")
-
-
-    class Meta:
-        verbose_name = 'Настройки сайта'
-        verbose_name_plural = 'Настройки сайта'
-
-    def __str__(self):
-        return "Настройки контактов"
-
-    @property
-    def phone_link(self):
-        """
-        Убирает пробелы, скобки и тире из номера телефона для ссылки tel:
-        """
-        if self.phone:
-            # Перед return тоже должны быть отступы (всего 8 пробелов от начала строки)
-            return self.phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
-        return "#"
-    
     telegram = models.URLField(blank=True, verbose_name="Ссылка на Telegram")
     vk = models.URLField(blank=True, verbose_name="Ссылка на VK")
     instagram = models.URLField(blank=True, verbose_name="Ссылка на Instagram")
@@ -115,13 +95,16 @@ class SiteSettings(models.Model):
     facebook = models.URLField(blank=True, verbose_name="Ссылка на Facebook")
     tiktok = models.URLField(blank=True, verbose_name="Ссылка на TikTok")
     youtube = models.URLField(blank=True, verbose_name="Ссылка на YouTube")
-    
-    
 
     def __str__(self):
         return "Настройки контактов (редактировать тут)"
 
+    @property
+    def phone_link(self):
+        if self.phone:
+            return self.phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        return "#"
+
     class Meta:
         verbose_name = 'Настройки сайта'
         verbose_name_plural = 'Настройки сайта'
-

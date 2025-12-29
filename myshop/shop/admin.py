@@ -38,6 +38,12 @@ class CategoryAdmin(admin.ModelAdmin):
 class BannerAdmin(admin.ModelAdmin):
     list_display = ['title', 'banner_type', 'is_active']
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['title'].required = False
+        form.base_fields['title'].widget.attrs['placeholder'] = 'Можно оставить пустым'
+        return form
+
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):

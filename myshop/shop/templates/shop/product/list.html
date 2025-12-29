@@ -43,62 +43,97 @@
             </div>
         </div>
 
+        <!-- Правая часть -->
         <div class="col-lg-9">
-            <div class="row g-4 mb-4">
-                <div class="col-md-8">
-                    {% if main_banner %}
-                    <div class="hero-banner-main shadow-sm" style="background: url('{{ main_banner.image.url }}') center/cover no-repeat; position: relative;">
-                        <div style="background: rgba(0,0,0,0.4); position: absolute; inset: 0; border-radius: 20px;"></div>
-                        <div class="z-2 position-relative text-white">
-                            <span class="badge bg-danger mb-2 px-3 py-2 rounded-pill">Акция</span>
-                            <h1 class="display-4 fw-bold">{{ main_banner.title }}</h1>
-                            <p class="lead">{{ main_banner.text }}</p>
-                            {% if main_banner.link %}
-                                <a href="{{ main_banner.link }}" class="btn btn-light rounded-pill px-4 fw-bold mt-3">Подробнее</a>
-                            {% endif %}
-                        </div>
-                    </div>
+           <!-- Блок с автоматической сменой баннеров (без дымки + кликабельный весь баннер) -->
+<div class="featured-section mb-5">
+    <div class="banner-slider position-relative rounded-4 overflow-hidden shadow-lg" style="height: 440px;">
+        
+        {% for banner in banners %}
+        <div class="banner-slide {% if forloop.first %}active{% endif %}">
+            {% if banner.link %}
+            <a href="{{ banner.link }}" class="d-block h-100 w-100 text-decoration-none">
+            {% endif %}
+            
+            <div class="position-relative h-100 w-100"
+                 style="background-image: url('{{ banner.image.url }}');
+                        background-size: cover; 
+                        background-position: center;
+                        transition: transform 0.3s ease;">  <!-- плавное увеличение при наведении -->
+                
+                <div class="feature-content position-absolute bottom-0 start-0 p-5 text-white z-2">
+                    {% if banner.banner_type == 'main' or banner.is_action %}
+                    <span class="feature-badge d-inline-block px-4 py-2 mb-3 rounded-pill fw-bold fs-6 animate__animated animate__pulse animate__infinite">
+                    </span>
+                    {% endif %}
+                    
+                    <h2 class="display-4 fw-bold mb-3 text-shadow">{{ banner.title }}</h2>
+                    <p class="lead mb-4 text-shadow">{{ banner.text }}</p>
+                    
+                    {% if banner.link %}
+                    </span>
                     {% endif %}
                 </div>
-
-                <div class="col-md-4">
-                    <div class="d-flex flex-column h-100 gap-3">
-                        {% if small_top_banner %}
-                        <a href="{{ small_top_banner.link|default:'#' }}" class="d-block flex-grow-1 text-decoration-none">
-                            <div class="banner-vertical shadow-sm" style="background-image: url('{{ small_top_banner.image.url }}'); min-height: 160px; justify-content: center;">
-                                <div class="banner-overlay"></div>
-                                <div class="position-relative z-2">
-                                    <h3 class="fw-bold mb-2 fs-5">{{ small_top_banner.title }}</h3>
-                                    <p class="mb-3 opacity-75 small line-clamp-2">{{ small_top_banner.text|truncatewords:10 }}</p>
-                                    {% if small_top_banner.link %}
-                                    <span class="btn btn-light rounded-pill btn-sm px-3 fw-bold" style="font-size: 0.8rem;">
-                                        Подробнее <i class="fas fa-arrow-right ms-1"></i>
-                                    </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </a>
-                        {% endif %}
-
-                        {% if small_bottom_banner %}
-                        <a href="{{ small_bottom_banner.link|default:'#' }}" class="d-block flex-grow-1 text-decoration-none">
-                            <div class="banner-vertical shadow-sm" style="background-image: url('{{ small_bottom_banner.image.url }}'); min-height: 160px; justify-content: center;">
-                                <div class="banner-overlay"></div>
-                                <div class="position-relative z-2">
-                                    <h3 class="fw-bold mb-2 fs-5">{{ small_bottom_banner.title }}</h3>
-                                    <p class="mb-3 opacity-75 small line-clamp-2">{{ small_bottom_banner.text|truncatewords:10 }}</p>
-                                    {% if small_bottom_banner.link %}
-                                    <span class="btn btn-light rounded-pill btn-sm px-3 fw-bold" style="font-size: 0.8rem;">
-                                        Подробнее <i class="fas fa-arrow-right ms-1"></i>
-                                    </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
             </div>
+            
+            {% if banner.link %}
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="h-100 d-flex align-items-center justify-content-center text-white bg-dark bg-opacity-50">
+            <div class="text-center">
+                <h3>Баннеры не настроены</h3>
+                <p class="lead">Добавьте активные баннеры в админ-панели</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .banner-slider {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .banner-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 1.3s ease;
+        pointer-events: none;
+    }
+    
+    .banner-slide.active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 2;
+    }
+    
+    /* При наведении на баннер — лёгкое увеличение */
+    .banner-slide a:hover .position-relative {
+        transform: scale(1.03);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.banner-slide');
+    if (slides.length <= 1) return;
+    
+    let current = 0;
+    const intervalTime = 6500;
+    
+    function nextSlide() {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+    }
+    
+    setInterval(nextSlide, intervalTime);
+});
+</script>
 
             <h3 class="fw-bold mb-4">
                 {% if category %}{{ category.name }}{% else %}Все товары{% endif %}
